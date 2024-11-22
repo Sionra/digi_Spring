@@ -1,6 +1,7 @@
 package fr.digi_hello.services;
 
 import fr.digi_hello.classes.Ville;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,5 +23,15 @@ public class VilleService {
 
     public ArrayList<Ville> getVille() {
         return ville;
+    }
+
+    public ResponseEntity<String> addVille(String nom, int nbHabitants) {
+        for (Ville v : ville) {
+            if (v.getNom().equals(nom)) {
+                return ResponseEntity.badRequest().body("Ville existente");
+            }
+        }
+        this.ville.add(new Ville(nom, nbHabitants));
+        return ResponseEntity.ok("Ville " + nom + " ajouter avec succes");
     }
 }
