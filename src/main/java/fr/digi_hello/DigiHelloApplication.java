@@ -1,13 +1,13 @@
-package fr.digi.digi_spring_j21;
+package fr.digi_hello;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DigiSpringJ21Application {
+public class DigiHelloApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DigiSpringJ21Application.class, args);
+        SpringApplication.run(DigiHelloApplication.class, args);
     }
 
 }

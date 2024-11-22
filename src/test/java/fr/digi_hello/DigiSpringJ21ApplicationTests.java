@@ -1,4 +1,4 @@
-package fr.digi.digi_spring_j21;
+package fr.digi_hello;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

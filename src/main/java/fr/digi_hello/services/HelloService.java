@@ -1,4 +1,4 @@
-package fr.digi.digi_spring_j21.services;
+package fr.digi_hello.services;
 
 import org.springframework.stereotype.Service;
 

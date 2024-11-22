@@ -1,6 +1,6 @@
-package fr.digi.digi_spring_j21.controleurs;
+package fr.digi_hello.controleurs;
 
-import fr.digi.digi_spring_j21.services.HelloService;
+import fr.digi_hello.services.HelloService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
