@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>fr.digi</groupId>
-    <artifactId>digi_spring_j21</artifactId>
+    <artifactId>digi_hello</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>digi_spring_j21</name>
     <description>digi_spring_j21</description>
