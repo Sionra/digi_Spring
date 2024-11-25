@@ -2,8 +2,10 @@ package fr.digi_hello.controleurs;
 
 import fr.digi_hello.classes.Ville;
 import fr.digi_hello.services.VilleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -26,7 +28,10 @@ public class VilleControleur {
     }
 
     @PostMapping
-    public ResponseEntity<String> addVille(@RequestBody Ville ville) {
+    public ResponseEntity<String> addVille(@Valid @RequestBody Ville ville, BindingResult result) throws Exception{
+        if (result.hasErrors()){
+            throw new Exception(result.getAllErrors().get(0).getDefaultMessage());
+        }
         return this.villeService.addVille(ville.getNom(), ville.getNbHabitants());
     }
 
