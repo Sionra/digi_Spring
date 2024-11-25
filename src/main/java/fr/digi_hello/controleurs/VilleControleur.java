@@ -20,8 +20,23 @@ public class VilleControleur {
         return this.villeService.getVille();
     }
 
+    @GetMapping(path = "/{id}")
+    public Ville getVilleById(@PathVariable int id) {
+        return this.villeService.getVilleById(id);
+    }
+
     @PostMapping
     public ResponseEntity<String> addVille(@RequestBody Ville ville) {
         return this.villeService.addVille(ville.getNom(), ville.getNbHabitants());
+    }
+
+    @PutMapping
+    public ResponseEntity<String> updateVille(@RequestBody Ville ville) {
+        return this.villeService.modifyVille(ville);
+    }
+
+    @DeleteMapping(path = "delete/{id}")
+    public ResponseEntity<String> deleteVille(@PathVariable int id) {
+        return this.villeService.deleteVille(id);
     }
 }
