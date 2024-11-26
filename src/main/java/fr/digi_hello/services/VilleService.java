@@ -1,78 +1,90 @@
 package fr.digi_hello.services;
 
+import fr.digi_hello.DAO.VilleDAO;
+import fr.digi_hello.DAO.VilleDAOImpl;
 import fr.digi_hello.classes.Ville;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class VilleService {
-    private static int count = 1;
-    ArrayList<Ville> ville = new ArrayList<>();
 
-    public VilleService() {
-        ville.add(new Ville(count, "Nice", 343000));
-        count++;
-        ville.add(new Ville(count, "Carcassonne", 47800));
-        count++;
-        ville.add(new Ville(count, "Narbonne", 53400));
-        count++;
-        ville.add(new Ville(count, "Lyon", 484000));
-        count++;
-        ville.add(new Ville(count, "Foix", 9700));
-        count++;
-        ville.add(new Ville(count, "Pau", 77200));
-        count++;
-        ville.add(new Ville(count, "Marseille", 850700));
-        count++;
-        ville.add(new Ville(count, "Tarbes", 40600));
-        count++;
+    @Autowired
+    VilleDAO villeDAO;
+
+    public List<Ville> extractVilles() {
+        return villeDAO.extractVilles();
     }
 
-    public ArrayList<Ville> getVille() {
-        return ville;
+    public Ville extractVilleId(int idVille) {
+        return villeDAO.extractVilleId(idVille);
+//        return villeDAO.extractVille(nom);
+//        for (Ville v : villes) {
+//            if (v.getId() == id) {
+//                return v;
+//            }
+//        }
+//        return null;
     }
 
-    public ResponseEntity<String> addVille(String nom, int nbHabitants) {
-        for (Ville v : ville) {
-            if (v.getNom().equals(nom)) {
+    public Ville extractVilleName(String nom) {
+        return villeDAO.extractVilleName(nom);
+//        for (Ville v : villes) {
+//            if (v.getNom().equals(nom)) {
+//                return v;
+//            }
+//        }
+//        return null;
+    }
+
+    public ResponseEntity<String> insertVille(Ville ville) {
+        List<Ville> villes = extractVilles();
+        for (Ville v : villes) {
+            if (v.getNom().equals(ville.getNom())){
                 return ResponseEntity.badRequest().body("Ville existente");
             }
         }
-        this.ville.add(new Ville(count, nom, nbHabitants));
-        count++;
-        return ResponseEntity.ok("Ville " + nom + " ajouter avec succes");
+        try {
+            villeDAO.insertVille(ville);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Une erreur est survenue lors de l'ajout de la ville");
+        }
+        return ResponseEntity.ok("Ville " + ville.getNom() + " ajouter avec succes");
+//        for (Ville v : ville) {
+//            if (v.getNom().equals(nom)) {
+//                return ResponseEntity.badRequest().body("Ville existente");
+//            }
+//        }
+//        this.ville.add(new Ville(count, nom, nbHabitants));
+//        count++;
+//        return ResponseEntity.ok("Ville " + nom + " ajouter avec succes");
     }
 
-    public Ville getVilleById(int id) {
-        for (Ville v : ville) {
-            if (v.getId() == id) {
-                return v;
-            }
-        }
-        return null;
+    public List<Ville> modifyVille(int villeId, Ville ville) {
+        return villeDAO.modifierVille(villeId, ville);
+
+//        boolean found = false;
+//        for (Ville v : this.ville) {
+//            if (v.getNom().equals(ville.getNom())) {
+//                v.setNbHabitants(ville.getNbHabitants());
+//                found = true;
+//            }
+//        }
+//         if ( found ) return ResponseEntity.ok("Ville modifier avec succes");
+//         return ResponseEntity.badRequest().body("Ville non existente");
     }
 
-    public ResponseEntity<String> modifyVille(Ville ville) {
-        boolean found = false;
-        for (Ville v : this.ville) {
-            if (v.getNom().equals(ville.getNom())) {
-                v.setNbHabitants(ville.getNbHabitants());
-                found = true;
-            }
-        }
-         if ( found ) return ResponseEntity.ok("Ville modifier avec succes");
-         return ResponseEntity.badRequest().body("Ville non existente");
-    }
-
-    public ResponseEntity<String> deleteVille(int id) {
-        for (Ville v : this.ville) {
-            if (v.getId() == id) {
-                this.ville.remove(v);
-                return ResponseEntity.ok("Ville supprimer avec succes");
-            }
-        }
-        return ResponseEntity.badRequest().body("Ville non existente");
+    public List<Ville> deleteVille(int id) {
+        return villeDAO.supprimerVille(id);
+//        for (Ville v : this.ville) {
+//            if (v.getId() == id) {
+//                this.ville.remove(v);
+//                return ResponseEntity.ok("Ville supprimer avec succes");
+//            }
+//        }
+//        return ResponseEntity.badRequest().body("Ville non existente");
     }
 }

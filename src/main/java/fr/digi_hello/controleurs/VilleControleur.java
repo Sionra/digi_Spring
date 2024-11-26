@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/villes")
@@ -18,13 +19,18 @@ public class VilleControleur {
     VilleService villeService;
 
     @GetMapping
-    public ArrayList<Ville> Listville() {
-        return this.villeService.getVille();
+    public List<Ville> listVille() {
+        return this.villeService.extractVilles();
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/id/{id}")
     public Ville getVilleById(@PathVariable int id) {
-        return this.villeService.getVilleById(id);
+        return this.villeService.extractVilleId(id);
+    }
+
+    @GetMapping(path = "/name/{name}")
+    public Ville getVilleByName(@PathVariable String name) {
+        return this.villeService.extractVilleName(name);
     }
 
     @PostMapping
@@ -32,16 +38,19 @@ public class VilleControleur {
         if (result.hasErrors()){
             throw new Exception(result.getAllErrors().get(0).getDefaultMessage());
         }
-        return this.villeService.addVille(ville.getNom(), ville.getNbHabitants());
+        return this.villeService.insertVille(ville);
+        //return this.villeService.insertVille(ville.getNom(), ville.getNbHabitants());
     }
 
-    @PutMapping
-    public ResponseEntity<String> updateVille(@RequestBody Ville ville) {
-        return this.villeService.modifyVille(ville);
+    @PutMapping(path = "update/{id}")
+    public ResponseEntity<String> updateVille(@PathVariable("id") int id, @Valid @RequestBody Ville villes, BindingResult result) {
+        this.villeService.modifyVille(id, villes);
+        return ResponseEntity.ok("Ville mise a jour avec succes");
     }
 
     @DeleteMapping(path = "delete/{id}")
     public ResponseEntity<String> deleteVille(@PathVariable int id) {
-        return this.villeService.deleteVille(id);
+        this.villeService.deleteVille(id);
+        return ResponseEntity.ok("Ville supprimer avec succes");
     }
 }
