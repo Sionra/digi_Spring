@@ -10,6 +10,8 @@ public class Departement {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(name = "CODE")
+    private String code;
     @Column(name = "NOM")
     private String nom;
 
