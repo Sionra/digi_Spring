@@ -9,6 +9,7 @@ public class VilleMapper {
 
     static public VilleDTO toDto(Ville ville) {
         VilleDTO villeDTO = new VilleDTO();
+        villeDTO.setNom(ville.getNom());
         villeDTO.setCodeVille(ville.getNom());
         villeDTO.setNbHabitants(ville.getNbHabitants());
         villeDTO.setCodeDepartement(ville.getDepartement().getCode());

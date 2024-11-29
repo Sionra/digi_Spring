@@ -1,13 +1,18 @@
 package fr.digi_hello.controleurs;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
 import fr.digi_hello.DTO.VilleDTO;
 import fr.digi_hello.exceptions.VilleException;
 import fr.digi_hello.classes.Ville;
 import fr.digi_hello.services.VilleService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -28,8 +33,37 @@ public class VilleControleur {
     }
     
     @GetMapping(path = "greaterThan/{nb}")
-    public List<VilleDTO> findGreater(@PathVariable int nb) {
+    public List<VilleDTO> findGreater(@PathVariable int nb) throws VilleException {
         return villeService.findGreater(nb);
+    }
+
+    @GetMapping(path = "greaterThan/{nb}/export")
+    public void findGreaterExport(@PathVariable int nb, HttpServletResponse response) throws IOException, DocumentException {
+        Document document = new Document(PageSize.A4);
+        response.setHeader("Content-Type", "attachement; filename=\"fichier.pdr\"");
+        PdfWriter.getInstance(document, response.getOutputStream());
+
+        document.open();
+        document.addTitle("Villes");
+        document.newPage();
+        BaseFont baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
+        List<VilleDTO> listeVille = villeService.findGreater(nb);
+        for ( VilleDTO ville : listeVille) {
+//          String uri = "https://geo.api.gouv.fr/departements/" + ville.getCodeDepartement() + "?fields=nom,code,codeRegion";
+//          String data = new RestTemplate().getForObject(uri, String.class);
+//            JSONParser parse = new JSONParser(data);
+//            JSONObject json_data = parse.parse();
+            Phrase p = new Phrase("Nom de la ville : " + ville.getNom()
+                    + "\nNombre d'habitant : " + ville.getNbHabitants()
+                    + "\nCode Departement : " + ville.getCodeDepartement()
+                    + "\nNom Departement : " +
+                    "\n-------\n"
+            , new Font(baseFont, 32.0f,1, new BaseColor(0, 51, 80)));
+            document.add(p);
+        }
+
+        document.close();
+        response.flushBuffer();
     }
 
     @GetMapping(path = "between/{min},{max}")
