@@ -2,7 +2,8 @@ package fr.digi_hello.services;
 
 import fr.digi_hello.DTO.VilleDTO;
 import fr.digi_hello.DTO.VilleMapper;
-import fr.digi_hello.Repository.VilleRepository;
+import fr.digi_hello.exceptions.VilleException;
+import fr.digi_hello.repositorys.VilleRepository;
 import fr.digi_hello.classes.Ville;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -23,8 +24,13 @@ public class VilleService {
         return listVilleToDTO(villeRepository.findAll());
     }
 
-    public List<VilleDTO> findByNomLike(String nom) {
-        return listVilleToDTO(villeRepository.findByNomContains(nom));
+    public List<Ville> findByNomLike(String nom) throws VilleException {
+        List<Ville> list = villeRepository.findByNomLike(nom);
+        if (list.isEmpty()) {
+            throw new VilleException("Aucune ville existe avec ce nom");
+        }
+        return list;
+        //return listVilleToDTO(list);
     }
 
     public List<VilleDTO> findGreater(int nb) {
@@ -58,7 +64,19 @@ public class VilleService {
         return listVilleToDTO(villeRepository.findByDepartement_CodeOrderByNbHabitantsDesc(id, pageable));
     }
 
-    public ResponseEntity<String> insertVille(Ville ville) {
+    public ResponseEntity<String> insertVille(Ville ville) throws VilleException {
+        if ( ville.getNbHabitants() < 10 ){
+            throw new VilleException("La ville a moins de 10 habitants");
+        }
+        if ( ville.getNom().length() < 2){
+            throw new VilleException("La ville doit contenir 2 lettres dans son nom");
+        }
+        if ( ville.getDepartement().getCode().length() == 2){
+            throw new VilleException("Le code de departement, doit contenir exactement 2 lettre");
+        }
+        //Condition que le nom de la ville et unique dans un departement, mais method de departement a faire avant
+
+
         this.villeRepository.save(ville);
         return ResponseEntity.ok("Ville inserted successfully");
     }

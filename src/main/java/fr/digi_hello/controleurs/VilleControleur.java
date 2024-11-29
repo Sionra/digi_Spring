@@ -1,6 +1,7 @@
 package fr.digi_hello.controleurs;
 
 import fr.digi_hello.DTO.VilleDTO;
+import fr.digi_hello.exceptions.VilleException;
 import fr.digi_hello.classes.Ville;
 import fr.digi_hello.services.VilleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class VilleControleur {
     }
 
     @GetMapping("nomLike/{nom}")
-    public List<VilleDTO> findByNomLike(@PathVariable String nom) {
+    public List<Ville> findByNomLike(@PathVariable String nom) throws VilleException {
         return villeService.findByNomLike(nom);
     }
     
@@ -62,7 +63,7 @@ public class VilleControleur {
     }
 
     @PostMapping
-    public ResponseEntity<String> addVille(@RequestBody Ville ville){
+    public ResponseEntity<String> addVille(@RequestBody Ville ville) throws VilleException {
         villeService.insertVille(ville);
         return ResponseEntity.ok("Ville added");
     }

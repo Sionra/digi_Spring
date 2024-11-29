@@ -1,4 +1,4 @@
-package fr.digi_hello.Repository;
+package fr.digi_hello.repositorys;
 
 import fr.digi_hello.classes.Ville;
 import org.springframework.data.domain.Page;
@@ -30,6 +30,7 @@ public interface VilleRepository extends CrudRepository<Ville, Integer> {
      */
     List<Ville> findByNbHabitantsBetween(int nbHabitantsMin, int nbHabitantsMax);
     List<Ville> findByNomContains(String nom);
+    List<Ville> findByNomLike(String nom);
     List<Ville> findByDepartement_CodeAndNbHabitantsGreaterThan(String departementId, int nbHabitants);
     List<Ville> findByDepartement_CodeAndNbHabitantsBetween(String departementId, int nbHabitants, int nbHabitantsMax);
     Page<Ville> findByDepartement_CodeOrderByNbHabitantsDesc(String departementId, Pageable pageable);

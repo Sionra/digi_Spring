@@ -1,5 +1,6 @@
 package fr.digi_hello.classes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -14,8 +15,8 @@ public class Departement {
     private String code;
     @Column(name = "NOM")
     private String nom;
-
     @OneToMany
+    @JsonIgnore
     List<Ville> villes;
 
     public Departement() {}
