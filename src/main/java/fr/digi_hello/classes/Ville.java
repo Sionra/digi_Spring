@@ -49,4 +49,28 @@ public class Ville {
     public int getId() {
         return id;
     }
+
+    public Departement getDepartement() {
+        return departement;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setNom(@NotNull @Size(min = 2) String nom) {
+        this.nom = nom;
+    }
+
+    public @Null String getIdRegion() {
+        return idRegion;
+    }
+
+    public void setIdRegion(@Null String idRegion) {
+        this.idRegion = idRegion;
+    }
+
+    public void setDepartement(Departement departement) {
+        this.departement = departement;
+    }
 }

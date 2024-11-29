@@ -1,90 +1,82 @@
 package fr.digi_hello.services;
 
-import fr.digi_hello.DAO.VilleDAO;
-import fr.digi_hello.DAO.VilleDAOImpl;
+import fr.digi_hello.DTO.VilleDTO;
+import fr.digi_hello.DTO.VilleMapper;
+import fr.digi_hello.Repository.VilleRepository;
 import fr.digi_hello.classes.Ville;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class VilleService {
 
     @Autowired
-    VilleDAO villeDAO;
+    VilleRepository villeRepository;
 
-    public List<Ville> extractVilles() {
-        return villeDAO.extractVilles();
+    public List<VilleDTO> extractVilles() {
+        return listVilleToDTO(villeRepository.findAll());
     }
 
-    public Ville extractVilleId(int idVille) {
-        return villeDAO.extractVilleId(idVille);
-//        return villeDAO.extractVille(nom);
-//        for (Ville v : villes) {
-//            if (v.getId() == id) {
-//                return v;
-//            }
-//        }
-//        return null;
+    public List<VilleDTO> findByNomLike(String nom) {
+        return listVilleToDTO(villeRepository.findByNomContains(nom));
     }
 
-    public Ville extractVilleName(String nom) {
-        return villeDAO.extractVilleName(nom);
-//        for (Ville v : villes) {
-//            if (v.getNom().equals(nom)) {
-//                return v;
-//            }
-//        }
-//        return null;
+    public List<VilleDTO> findGreater(int nb) {
+        return listVilleToDTO(villeRepository.findByNbHabitantsGreaterThan(nb));
+    }
+
+    public VilleDTO extractVilleId(int idVille) {
+        Ville ville = villeRepository.findById(idVille);
+        return  VilleMapper.toDto(ville);
+    }
+
+    public VilleDTO extractVilleName(String nom) {
+        return  VilleMapper.toDto(villeRepository.findByNom(nom));
+    }
+
+    public List<VilleDTO> findBetween(int min, int max) {
+        Iterable<Ville> listVille = villeRepository.findByNbHabitantsBetween(min, max);
+        return listVilleToDTO(listVille);
+    }
+
+    public List<VilleDTO> findDepartementGreater(String code, int min) {
+        return listVilleToDTO(villeRepository.findByDepartement_CodeAndNbHabitantsGreaterThan(code, min));
+    }
+
+    public List<VilleDTO> findDepartementBetween(String code, int min, int max) {
+        return listVilleToDTO(villeRepository.findByDepartement_CodeAndNbHabitantsBetween(code, min, max));
+    }
+
+    public List<VilleDTO> findPageable(String id, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        return listVilleToDTO(villeRepository.findByDepartement_CodeOrderByNbHabitantsDesc(id, pageable));
     }
 
     public ResponseEntity<String> insertVille(Ville ville) {
-        List<Ville> villes = extractVilles();
-        for (Ville v : villes) {
-            if (v.getNom().equals(ville.getNom())){
-                return ResponseEntity.badRequest().body("Ville existente");
-            }
-        }
-        try {
-            villeDAO.insertVille(ville);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Une erreur est survenue lors de l'ajout de la ville");
-        }
-        return ResponseEntity.ok("Ville " + ville.getNom() + " ajouter avec succes");
-//        for (Ville v : ville) {
-//            if (v.getNom().equals(nom)) {
-//                return ResponseEntity.badRequest().body("Ville existente");
-//            }
-//        }
-//        this.ville.add(new Ville(count, nom, nbHabitants));
-//        count++;
-//        return ResponseEntity.ok("Ville " + nom + " ajouter avec succes");
+        this.villeRepository.save(ville);
+        return ResponseEntity.ok("Ville inserted successfully");
     }
 
-    public List<Ville> modifyVille(int villeId, Ville ville) {
-        return villeDAO.modifierVille(villeId, ville);
+//    public List<Ville> modifyVille(int villeId, Ville ville) {
+//        return villeDAO.modifierVille(villeId, ville);
+//
+//    }
 
-//        boolean found = false;
-//        for (Ville v : this.ville) {
-//            if (v.getNom().equals(ville.getNom())) {
-//                v.setNbHabitants(ville.getNbHabitants());
-//                found = true;
-//            }
-//        }
-//         if ( found ) return ResponseEntity.ok("Ville modifier avec succes");
-//         return ResponseEntity.badRequest().body("Ville non existente");
+    public void deleteVille(int id) {
+        villeRepository.deleteById(id);
     }
 
-    public List<Ville> deleteVille(int id) {
-        return villeDAO.supprimerVille(id);
-//        for (Ville v : this.ville) {
-//            if (v.getId() == id) {
-//                this.ville.remove(v);
-//                return ResponseEntity.ok("Ville supprimer avec succes");
-//            }
-//        }
-//        return ResponseEntity.badRequest().body("Ville non existente");
+    private List<VilleDTO> listVilleToDTO(Iterable<Ville> listVille){
+        List<VilleDTO> listVilleDTO = new ArrayList<>();
+        for (Ville ville : listVille) {
+            listVilleDTO.add(VilleMapper.toDto(ville));
+        }
+        return listVilleDTO;
     }
 }

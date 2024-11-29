@@ -43,4 +43,12 @@ public class Departement {
     public void setVilles(List<Ville> villes) {
         this.villes = villes;
     }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
 }
