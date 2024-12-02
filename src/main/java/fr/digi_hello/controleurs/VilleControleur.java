@@ -40,7 +40,7 @@ public class VilleControleur {
     @GetMapping(path = "greaterThan/{nb}/export")
     public void findGreaterExport(@PathVariable int nb, HttpServletResponse response) throws IOException, DocumentException {
         Document document = new Document(PageSize.A4);
-        response.setHeader("Content-Type", "attachement; filename=\"fichier.pdr\"");
+        response.setHeader("Content-Type", "attachment; filename=\"fichier.pdf\"");
         PdfWriter.getInstance(document, response.getOutputStream());
 
         document.open();
