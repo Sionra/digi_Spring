@@ -35,7 +35,7 @@ public class VilleControleur {
     }
     
     @GetMapping(path = "greaterThan/{nb}")
-    public List<VilleDTO> findGreater(@PathVariable int nb) throws VilleException {
+    public List<VilleDTO> findGreater(@PathVariable int nb) {
         return listVilleToDTO(villeService.findGreater(nb));
     }
 
