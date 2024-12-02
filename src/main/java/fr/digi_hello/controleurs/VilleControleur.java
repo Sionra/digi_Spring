@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import fr.digi_hello.DTO.VilleDTO;
+import fr.digi_hello.DTO.VilleMapper;
 import fr.digi_hello.exceptions.VilleException;
 import fr.digi_hello.classes.Ville;
 import fr.digi_hello.services.VilleService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,17 +26,17 @@ public class VilleControleur {
 
     @GetMapping("")
     public List<VilleDTO> findAll() {
-        return villeService.extractVilles();
+        return listVilleToDTO(villeService.extractVilles());
     }
 
     @GetMapping("nomLike/{nom}")
-    public List<Ville> findByNomLike(@PathVariable String nom) throws VilleException {
-        return villeService.findByNomLike(nom);
+    public List<VilleDTO> findByNomLike(@PathVariable String nom) throws VilleException {
+        return listVilleToDTO(villeService.findByNomLike(nom));
     }
     
     @GetMapping(path = "greaterThan/{nb}")
     public List<VilleDTO> findGreater(@PathVariable int nb) throws VilleException {
-        return villeService.findGreater(nb);
+        return listVilleToDTO(villeService.findGreater(nb));
     }
 
     @GetMapping(path = "greaterThan/{nb}/export")
@@ -47,15 +49,15 @@ public class VilleControleur {
         document.addTitle("Villes");
         document.newPage();
         BaseFont baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
-        List<VilleDTO> listeVille = villeService.findGreater(nb);
-        for ( VilleDTO ville : listeVille) {
+        List<Ville> listeVille = villeService.findGreater(nb);
+        for ( Ville ville : listeVille) {
 //          String uri = "https://geo.api.gouv.fr/departements/" + ville.getCodeDepartement() + "?fields=nom,code,codeRegion";
 //          String data = new RestTemplate().getForObject(uri, String.class);
 //            JSONParser parse = new JSONParser(data);
 //            JSONObject json_data = parse.parse();
             Phrase p = new Phrase("Nom de la ville : " + ville.getNom()
                     + "\nNombre d'habitant : " + ville.getNbHabitants()
-                    + "\nCode Departement : " + ville.getCodeDepartement()
+                    + "\nCode Departement : " + ville.getDepartement().getCode()
                     + "\nNom Departement : " +
                     "\n-------\n"
             , new Font(baseFont, 32.0f,1, new BaseColor(0, 51, 80)));
@@ -68,32 +70,32 @@ public class VilleControleur {
 
     @GetMapping(path = "between/{min},{max}")
     public List<VilleDTO> findBetween(@PathVariable int min, @PathVariable int max) {
-        return villeService.findBetween(min, max);
+        return listVilleToDTO(villeService.findBetween(min, max));
     }
 
     @GetMapping(path = "DepartementGreater/{code},{min}")
     public List<VilleDTO> findDepartementGreater(@PathVariable String code, @PathVariable int min) {
-        return villeService.findDepartementGreater(code, min);
+        return listVilleToDTO(villeService.findDepartementGreater(code, min));
     }
 
     @GetMapping(path = "DepartementBetween/{code},{min},{max}")
     public List<VilleDTO> findDepartementBetween(@PathVariable String code, @PathVariable int min, @PathVariable int max) {
-        return villeService.findDepartementBetween(code, min, max);
+        return listVilleToDTO(villeService.findDepartementBetween(code, min, max));
     }
 
     @GetMapping(path = "/id/{id}")
     public VilleDTO getVilleById(@PathVariable int id) {
-        return villeService.extractVilleId(id);
+        return VilleMapper.toDto(villeService.extractVilleId(id));
     }
 
     @GetMapping(path = "/name/{name}")
     public VilleDTO getVilleByName(@PathVariable String name) {
-        return villeService.extractVilleName(name);
+        return VilleMapper.toDto(villeService.extractVilleName(name));
     }
 
     @GetMapping(path = "/findPageable/{id},{size}")
     public List<VilleDTO> findPageable(@PathVariable String id, @PathVariable int size) {
-        return villeService.findPageable(id, size);
+        return listVilleToDTO(villeService.findPageable(id, size));
     }
 
     @PostMapping
@@ -112,5 +114,13 @@ public class VilleControleur {
     public ResponseEntity<String> deleteVille(@PathVariable int id) {
         villeService.deleteVille(id);
         return ResponseEntity.ok("Ville deleted");
+    }
+
+    private List<VilleDTO> listVilleToDTO(Iterable<Ville> listVille){
+        List<VilleDTO> listVilleDTO = new ArrayList<>();
+        for (Ville ville : listVille) {
+            listVilleDTO.add(VilleMapper.toDto(ville));
+        }
+        return listVilleDTO;
     }
 }
